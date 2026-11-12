@@ -8,6 +8,8 @@ $cfgPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) 'config.j
 $cfg = $null
 if (Test-Path -LiteralPath $cfgPath) { try { $cfg = Get-Content -LiteralPath $cfgPath -Raw | ConvertFrom-Json } catch {} }
 $exe = if ($cfg -and $cfg.exe) { [string]$cfg.exe } else { 'C:\Program Files\DeepSeek Harness\DeepSeek Harness.exe' }
+$title = if ($cfg -and $cfg.title) { [string]$cfg.title } else { '开始和 DeepSeek Harness 对话' }
+$subtitle = if ($cfg -and $cfg.subtitle) { [string]$cfg.subtitle } else { '点一下进入对话' }
 $iconPath = Join-Path $scriptDir 'dsh_icon_256.png'
 $pidFile = Join-Path $scriptDir 'widget.pid'
 $logFile = Join-Path $scriptDir 'widget.log'
@@ -91,13 +93,13 @@ $xaml = @"
     </Viewbox>
     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="11,0,14,0">
       <TextBlock x:Name="Title" FontFamily="Microsoft YaHei UI, Segoe UI" FontSize="15.5" FontWeight="SemiBold"
-                 Foreground="#FFFFFF" Text="开始和大肥鱼对话">
+                 Foreground="#FFFFFF" Text="__TITLE__">
         <TextBlock.Effect>
           <DropShadowEffect Color="#000000" BlurRadius="10" ShadowDepth="2" Opacity="0.6"/>
         </TextBlock.Effect>
       </TextBlock>
       <TextBlock x:Name="Sub" FontFamily="Microsoft YaHei UI, Segoe UI" FontSize="10.5"
-                 Foreground="#F0FFFFFF" Margin="0,5,0,0" Text="点一下进入对话">
+                 Foreground="#F0FFFFFF" Margin="0,5,0,0" Text="__SUBTITLE__">
         <TextBlock.Effect>
           <DropShadowEffect Color="#000000" BlurRadius="9" ShadowDepth="1" Opacity="0.6"/>
         </TextBlock.Effect>
@@ -107,6 +109,7 @@ $xaml = @"
 </Window>
 "@
 
+$xaml = $xaml.Replace('__TITLE__', $title).Replace('__SUBTITLE__', $subtitle)
 $reader = New-Object System.Xml.XmlNodeReader ([xml]$xaml)
 $window = [Windows.Markup.XamlReader]::Load($reader)
 $root = $window.FindName('Root')

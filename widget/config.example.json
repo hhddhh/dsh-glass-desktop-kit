@@ -1,4 +1,6 @@
 {
-  "exe": "C:\Program Files\DeepSeek Harness\DeepSeek Harness.exe",
-  "runtimeDir": "C:\Users\<you>\AppData\Roaming\@deepseek-ai\dsh-desktop\dsh-glass"
+  "exe": "C:\\Program Files\\DeepSeek Harness\\DeepSeek Harness.exe",
+  "runtimeDir": "C:\\Users\\<you>\\AppData\\Roaming\\@deepseek-ai\\dsh-desktop\\dsh-glass",
+  "title": "开始和 DeepSeek Harness 对话",
+  "subtitle": "点一下进入对话"
 }
