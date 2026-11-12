@@ -1,0 +1,10 @@
+# runtime artifacts
+*.log
+*.pid
+wake.txt
+widget_pos.json
+config.json
+__pycache__/
+*.pyc
+# local
+.env

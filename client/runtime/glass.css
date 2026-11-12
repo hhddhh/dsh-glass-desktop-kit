@@ -1,0 +1,203 @@
+/* ============================================================================
+   DSH 半透明外观（Windows）
+   主进程以 user origin 注入；改动 1~2 秒热更新，不用重启客户端。
+   可调：--dsh-glass-alpha  0.2（很透）→ 1（不透明）
+   文字对比：--dsh-boost 由 alpha 反推（背景越透 → 文字越深）
+   ========================================================================== */
+
+/* ---------- 1. 窗口根：透明 + 超椭圆圆角裁剪 ---------- */
+html {
+	background: transparent !important;
+	border-radius: 34px;
+	corner-shape: squircle;
+	overflow: hidden;
+	--dsh-boost: clamp(0, calc((0.92 - var(--dsh-glass-alpha, 0.82)) * 3.2), 1);
+	--dsh-glass-tint: #ffffff;
+}
+
+html:has(body[data-ds-dark-theme]) {
+	--dsh-glass-tint: #151517;
+}
+
+/* 整窗底色：用圆角覆盖层画（body 背景会被画到整个矩形，圆角无效） */
+html::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	border-radius: 34px;
+	corner-shape: squircle;
+	background: color-mix(in srgb,
+			var(--dsh-glass-tint) calc(var(--dsh-glass-alpha, 0.82) * 100%),
+			transparent);
+	pointer-events: none;
+}
+
+/* ---------- 2. 文字：越透明越深，保证对比度 ---------- */
+body {
+	--dsw-alias-label-primary: color-mix(in srgb, #000 calc(var(--dsh-boost) * 100%), #0f1115) !important;
+	--dsw-alias-label-secondary: color-mix(in srgb, #000 calc(var(--dsh-boost) * 80%), #61666b) !important;
+	--dsw-alias-label-tertiary: color-mix(in srgb, #000 calc(var(--dsh-boost) * 65%), #81858c) !important;
+}
+
+html:has(body[data-ds-dark-theme]) body {
+	--dsw-alias-label-primary: color-mix(in srgb, #fff calc(var(--dsh-boost) * 100%), #f9fafb) !important;
+	--dsw-alias-label-secondary: color-mix(in srgb, #fff calc(var(--dsh-boost) * 80%), #cfd3d6) !important;
+	--dsw-alias-label-tertiary: color-mix(in srgb, #fff calc(var(--dsh-boost) * 65%), #adb2b8) !important;
+}
+
+/* ---------- 3. 外壳：去掉整块不透明底色 ---------- */
+#root,
+#root > div,
+.mP3x-q_frame,
+.mP3x-q_frame::before,
+.mP3x-q_centerCol,
+.mP3x-q_rightbarCol,
+.an3WzG_root,
+.wtg9ga_root,
+.wtg9ga_footArea {
+	background: transparent !important;
+}
+
+#root {
+	border-radius: 34px;
+	corner-shape: squircle;
+	overflow: clip;
+}
+
+/* 左栏：很薄的一层区分色，跟着透明度走 */
+.mP3x-q_sidebarCol {
+	background: color-mix(in srgb,
+			var(--dsw-specific-sidebar-fill, #f9fafb) calc(var(--dsh-glass-alpha, 0.82) * 40%),
+			transparent) !important;
+	border-right: .5px solid color-mix(in srgb, var(--dsw-alias-border-l3, rgba(0, 0, 0, .1)) 45%, transparent) !important;
+}
+
+/* ---------- 4. 组件底色：跟着透明度一起缩放 ---------- */
+body {
+	--dsw-alias-bg-base: transparent !important;
+	--dsw-alias-bg-layer-1: color-mix(in srgb, #fff calc(var(--dsh-glass-alpha, 0.82) * 30%), transparent) !important;
+	--dsw-alias-bg-layer-2: color-mix(in srgb, #fff calc(var(--dsh-glass-alpha, 0.82) * 42%), transparent) !important;
+	--dsw-alias-bg-layer-3: color-mix(in srgb, #fff calc(var(--dsh-glass-alpha, 0.82) * 58%), transparent) !important;
+	--dsw-alias-bg-layer-4: color-mix(in srgb, #fff calc(var(--dsh-glass-alpha, 0.82) * 66%), transparent) !important;
+	--dsw-alias-bg-module-platform: color-mix(in srgb, #fff calc(var(--dsh-glass-alpha, 0.82) * 30%), transparent) !important;
+	/* 菜单/提示/悬浮卡：跟着透明度一起缩放，不要固定白底 */
+	/* 弹窗遮罩：不再强制加灰 */
+	--dsw-alias-bg-mask-1: transparent !important;
+	--dsw-mask-blur: none !important;
+}
+
+html:has(body[data-ds-dark-theme]) body {
+	--dsw-alias-bg-layer-1: color-mix(in srgb, #151517 calc(var(--dsh-glass-alpha, 0.82) * 30%), transparent) !important;
+	--dsw-alias-bg-layer-2: color-mix(in srgb, #151517 calc(var(--dsh-glass-alpha, 0.82) * 42%), transparent) !important;
+	--dsw-alias-bg-layer-3: color-mix(in srgb, #151517 calc(var(--dsh-glass-alpha, 0.82) * 58%), transparent) !important;
+	--dsw-alias-bg-layer-4: color-mix(in srgb, #151517 calc(var(--dsh-glass-alpha, 0.82) * 66%), transparent) !important;
+	--dsw-alias-bg-module-platform: color-mix(in srgb, #151517 calc(var(--dsh-glass-alpha, 0.82) * 30%), transparent) !important;
+}
+
+/* 列表底部那种“渐隐到白”的遮罩：在透明背景下会变成一块白条，直接去掉 */
+[class*="_fade"] {
+	background-image: none !important;
+}
+
+/* 启动画面 */
+._boot_u7vgf_3 {
+	background: transparent !important;
+}
+
+/* ---------- 5. 滚动条：不要白条 ---------- */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+	background: transparent !important;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+	background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.145) !important;
+	border: 2px solid transparent !important;
+	background-clip: content-box !important;
+	border-radius: 8px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.26) !important;
+	border: 2px solid transparent !important;
+	background-clip: content-box !important;
+}
+
+/* ---------- 6. 整窗描边（透明窗没有系统阴影） ---------- */
+html::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	border-radius: 34px;
+	corner-shape: squircle;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12), inset 0 0 22px rgba(0, 0, 0, .05);
+	pointer-events: none;
+	z-index: 2147483000;
+}
+
+/* ---------- 7. 从客户端本体弹出的浮层：一律纯色不透明 ---------- */
+html {
+	--dsh-solid-bg: #f9fafb;
+}
+
+html:has(body[data-ds-dark-theme]) {
+	--dsh-solid-bg: #1b1b1c;
+}
+
+:is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]),
+.dsh-mobile-control__panel {
+	background-color: var(--dsh-solid-bg) !important;
+}
+
+/* 浮层里的次级面板、输入框、列表背景也别透 */
+:is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]) .dsh-mobile-control__provider-section,
+:is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]) .dsh-mobile-control__app-download {
+	background-color: color-mix(in srgb, var(--dsh-solid-bg) 88%, #ffffff) !important;
+}
+
+/* ---------- 8. 浮层原始配色（提示框/气泡/悬浮卡的深底白字保持原样） ---------- */
+body {
+	--dsw-alias-tooltip-bg: var(--dsw-static-neutral-bluish-850) !important;
+	--dsw-alias-toast-bg: var(--dsw-static-neutral-bluish-800) !important;
+	--dsw-hovercard-bg: #2c2c2e !important;
+}
+
+html:has(body[data-ds-dark-theme]) body {
+	--dsw-alias-tooltip-bg: var(--dsw-static-neutral-bluish-750) !important;
+	--dsw-alias-toast-bg: var(--dsw-static-neutral-bluish-750) !important;
+}
+
+
+[class*="_scrollFade"]{background-image:none!important}
+
+/* ---------- 9. 关掉 backdrop-filter：透明窗口上它每帧都要重算，是 CPU/GPU 占用的大头 ---------- */
+*,
+*::before,
+*::after {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+}
+
+/* ---------- 10. 自绘标题栏按钮（关掉系统 overlay 按钮后替代它们） ---------- */
+#dsh-glass-dragstrip {
+	position: fixed; top: 0; left: 210px; right: 150px; height: 40px;
+	z-index: 2147483001; -webkit-app-region: drag;
+}
+.dsh-glass-winbar {
+	position: fixed; top: 6px; right: 8px; height: 28px; display: flex; align-items: center; gap: 2px;
+	z-index: 2147483002; -webkit-app-region: no-drag;
+}
+.dsh-glass-winbtn {
+	width: 38px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+	cursor: default; color: var(--dsw-alias-label-secondary, #61666b); background: transparent;
+	transition: background .12s ease, color .12s ease;
+}
+.dsh-glass-winbtn:hover { background: rgba(0, 0, 0, .09); }
+.dsh-glass-winbtn.dsh-close:hover { background: #e81123; color: #ffffff; }
