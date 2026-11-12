@@ -31,6 +31,8 @@ DeepSeek Harness 桌面版（Windows）的**圆润半透明外观 + 桌面小组
 
 ![桌面小组件](docs/images/widget.jpg)
 
+> 截图为作者自用昵称版本；开源版默认文案是「开始和 DeepSeek Harness 对话」，可在 `widget/config.json` 里改。
+
 ## 环境
 
 - Windows 11（在 24H2 / build 26100 上验证），175% 缩放
