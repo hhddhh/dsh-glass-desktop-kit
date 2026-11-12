@@ -17,6 +17,20 @@ DeepSeek Harness 桌面版（Windows）的**圆润半透明外观 + 桌面小组
 - 按住拖动：挪位置，松手记住；Shift + 点击：退出组件
 - 单实例、无控制台窗口、可由计划任务开机自启
 
+## 截图
+
+**透明效果：窗口背景半透明，桌面壁纸直接透出来，四角 34px 圆角，右上角为自绘圆角窗口按钮**
+
+![透明效果](docs/images/client-transparency.jpg)
+
+**外观面板（右下角水滴按钮 / Ctrl+Alt+G）**
+
+![外观面板](docs/images/appearance-panel.jpg)
+
+**桌面小组件（无背景浮层，点一下进入对话）**
+
+![桌面小组件](docs/images/widget.jpg)
+
 ## 环境
 
 - Windows 11（在 24H2 / build 26100 上验证），175% 缩放
