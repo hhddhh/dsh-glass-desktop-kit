@@ -23,6 +23,10 @@ DeepSeek Harness 桌面版（Windows）的**圆润半透明外观 + 桌面小组
 
 ![透明效果](docs/images/client-transparency.jpg)
 
+**自绘圆角窗口按钮（最小化 / 最大化 / 关闭，悬停为圆角底色）**
+
+![窗口按钮](docs/images/window-buttons.jpg)
+
 **外观面板（右下角水滴按钮 / Ctrl+Alt+G）**
 
 ![外观面板](docs/images/appearance-panel.jpg)
